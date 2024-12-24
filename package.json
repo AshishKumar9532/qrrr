@@ -1,12 +1,13 @@
 {
-  "name": "x_pair",
-  "version": "4.0.0",
-  "description": "simple pairing",
+  "name": "secktor_login",
+  "version": "1.0.0",
+  "description": "A secure login system",
+  "author": "Sampandey001",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start index.js --name x_pair",
-    "stop": "pm2 stop x_pair",
-    "restart": "pm2 restart x_pair",
+    "start": "pm2 start index.js --name secktor_login",
+    "stop": "pm2 stop secktor_login",
+    "restart": "pm2 restart secktor_login",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
