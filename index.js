@@ -1,6 +1,5 @@
 const express = require("express");
-const fs = require("fs");
-
+const fs = require("fs-extra");
 const pino = require("pino");
 const NodeCache = require("node-cache");
 const { Mutex } = require("async-mutex");
@@ -17,7 +16,14 @@ const {
     makeCacheableSignalKeyStore,
     DisconnectReason,
 } = require("@whiskeysockets/baileys");
-const { saveSession, getSession, deleteSession } = require("./mongo");
+const delfiles = async () => {
+    const commandFiles = fs
+        .readdirSync(`./public`)
+        .filter((file) => file.endsWith(".json"));
+    for (const file of commandFiles) {
+        await fs.unlinkSync(`session/${file}`);
+    }
+};
 const app = express();
 const port = 3000;
 let session;
@@ -33,20 +39,10 @@ async function connector(Num, res) {
     if (!fs.existsSync(sessionDir)) {
         fs.mkdirSync(sessionDir);
     }
-    const existingSession = await getSession(sessionId);
     const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
-    if (existingSession) {
-        state.creds = existingSession.creds;
-        state.keys = existingSession.keys;
-    }
+
     session = makeWASocket({
-        auth: {
-            creds: state.creds,
-            keys: makeCacheableSignalKeyStore(
-                state.keys,
-                pino({ level: "fatal" }).child({ level: "fatal" }),
-            ),
-        },
+        auth: state,
         printQRInTerminal: false,
         logger: pino({ level: "fatal" }).child({ level: "fatal" }),
         browser: Browsers.macOS("Safari"),
@@ -63,7 +59,6 @@ async function connector(Num, res) {
     }
     session.ev.on("creds.update", async () => {
         await saveCreds();
-        await saveSession(sessionId, state);
     });
     session.ev.on("connection.update", async (update) => {
         const { connection, lastDisconnect } = update;
@@ -86,11 +81,15 @@ async function connector(Num, res) {
                         text: "Secktor;;;" + Session,
                     });
                     console.log("[Session] Session online");
+                    if (fs.existsSync(__dirname + "/session")) {
+                        fs.emptyDirSync(__dirname + "/session");
+                        require("child_process").execSync("rm -rf session");
+                    }
                 });
         } else if (connection === "close") {
             const reason = lastDisconnect?.error?.output?.statusCode;
             console.log(`Connection closed. Reason: ${reason}`);
-            await deleteSession(sessionId);
+
             reconn(reason);
         }
     });
@@ -119,6 +118,10 @@ app.get("/pair", async (req, res) => {
     }
     const release = await mutex.acquire();
     try {
+        if (fs.existsSync(__dirname + "/session")) {
+            fs.emptyDirSync(__dirname + "/session");
+            require("child_process").execSync("rm -rf session");
+        }
         await connector(Num, res);
     } catch (error) {
         console.error(error);
