@@ -5,7 +5,6 @@ const NodeCache = require("node-cache");
 const { Mutex } = require("async-mutex");
 const PastebinAPI = require("pastebin-js");
 const path = require("path");
-pastebin = new PastebinAPI("EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL");
 const crypto = require("crypto");
 const axios = require("axios");
 const {
@@ -16,85 +15,122 @@ const {
     makeCacheableSignalKeyStore,
     DisconnectReason,
 } = require("@whiskeysockets/baileys");
-const delfiles = async () => {
-    const commandFiles = fs
-        .readdirSync(`./public`)
-        .filter((file) => file.endsWith(".json"));
-    for (const file of commandFiles) {
-        await fs.unlinkSync(`session/${file}`);
-    }
-};
+
+// Initialize services
+const pastebin = new PastebinAPI("EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL");
 const app = express();
 const port = 3000;
-let session;
 const msgRetryCounterCache = new NodeCache();
 const mutex = new Mutex();
+const logger = pino({ level: "info" });
+
+// Clean up session files if necessary
+const cleanSessionDir = async () => {
+    const sessionDir = path.join(__dirname, "session");
+    if (fs.existsSync(sessionDir)) {
+        await fs.emptyDir(sessionDir);
+        await fs.remove(sessionDir);
+    }
+};
+
+// Middleware to serve static files
 app.use(express.static(path.join(__dirname, "pages")));
+
+// Define routes
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "pages", "dashboard.html"));
 });
-async function connector(Num, res) {
-    const sessionId = `Naxor~${crypto.randomBytes(8).toString("hex")}`;
-    const sessionDir = "./session";
-    if (!fs.existsSync(sessionDir)) {
-        fs.mkdirSync(sessionDir);
+
+app.get("/pair", async (req, res) => {
+    const Num = req.query.code;
+    if (!Num) {
+        return res.status(400).json({ message: "Phone number is required" });
     }
+
+    const release = await mutex.acquire();
+    try {
+        await cleanSessionDir();
+        await connector(Num, res);
+    } catch (error) {
+        logger.error("Error during pairing process:", error);
+        res.status(500).json({ error: "Server Error" });
+        await cleanSessionDir();
+    } finally {
+        release();
+    }
+});
+
+// Connector function to handle WhatsApp connection
+async function connector(Num, res) {
+    const sessionDir = path.join(__dirname, "session");
+    await fs.ensureDir(sessionDir);
+
     const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
 
     session = makeWASocket({
-        auth: state,
+        auth: {
+            creds: state.creds,
+            keys: makeCacheableSignalKeyStore(state.keys, logger),
+        },
         printQRInTerminal: false,
-        logger: pino({ level: "fatal" }).child({ level: "fatal" }),
+        logger,
         browser: Browsers.macOS("Safari"),
         markOnlineOnConnect: true,
         msgRetryCounterCache,
     });
+
     if (!session.authState.creds.registered) {
         await delay(1500);
         Num = Num.replace(/[^0-9]/g, "");
         const code = await session.requestPairingCode(Num);
         if (!res.headersSent) {
-            res.send({ code: code?.match(/.{1,4}/g)?.join("-") });
+            res.json({ code: code?.match(/.{1,4}/g)?.join("-") });
         }
     }
+
     session.ev.on("creds.update", async () => {
         await saveCreds();
     });
+
     session.ev.on("connection.update", async (update) => {
         const { connection, lastDisconnect } = update;
         if (connection === "open") {
-            console.log("Connected successfully");
+            logger.info("Connected successfully");
             await delay(5000);
-
-            pastebin
-                .createPasteFromFile(
-                    __dirname + "/session/creds.json",
-                    "SamPandey001",
-                    null,
-                    1,
-                    "N",
-                )
-                .then(async (data) => {
-                    let unique = data.split("/")[3];
-                    let Session = Buffer.from(unique).toString("base64");
-                    await session.sendMessage(session.user.id, {
-                        text: "Secktor;;;" + Session,
-                    });
-                    console.log("[Session] Session online");
-                    if (fs.existsSync(__dirname + "/session")) {
-                        fs.emptyDirSync(__dirname + "/session");
-                        require("child_process").execSync("rm -rf session");
-                    }
-                });
+            await handleSessionUpload(session);
         } else if (connection === "close") {
             const reason = lastDisconnect?.error?.output?.statusCode;
-            console.log(`Connection closed. Reason: ${reason}`);
-
+            logger.warn(`Connection closed. Reason: ${reason}`);
             reconn(reason);
         }
     });
 }
 
+// Handle session upload to Pastebin
+async function handleSessionUpload(session) {
+    try {
+        const sessionFilePath = path.join(__dirname, "session", "creds.json");
+        const pasteData = await pastebin.createPasteFromFile(
+            sessionFilePath,
+            "SamPandey001",
+            null,
+            1,
+            "N",
+        );
+        const unique = pasteData.split("/")[3];
+        const sessionKey = Buffer.from(unique).toString("base64");
+        await session.sendMessage(session.user.id, {
+            text: "Secktor;;;" + sessionKey,
+        });
+        logger.info("[Session] Session online");
+
+        await cleanSessionDir();
+    } catch (error) {
+        logger.error("Error uploading session to Pastebin:", error);
+    }
+}
+
+// Reconnect function to handle disconnections
 function reconn(reason) {
     if (
         [
@@ -103,34 +139,15 @@ function reconn(reason) {
             DisconnectReason.restartRequired,
         ].includes(reason)
     ) {
-        console.log("Connection lost, reconnecting...");
+        logger.info("Connection lost, reconnecting...");
         connector();
     } else {
-        console.log(`Disconnected! Reason: ${reason}`);
+        logger.error(`Disconnected! Reason: ${reason}`);
         session.end();
     }
 }
 
-app.get("/pair", async (req, res) => {
-    const Num = req.query.code;
-    if (!Num) {
-        return res.status(418).json({ message: "Phone number is required" });
-    }
-    const release = await mutex.acquire();
-    try {
-        if (fs.existsSync(__dirname + "/session")) {
-            fs.emptyDirSync(__dirname + "/session");
-            require("child_process").execSync("rm -rf session");
-        }
-        await connector(Num, res);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "server Error" });
-    } finally {
-        release();
-    }
-});
-
+// Start the server
 app.listen(port, () => {
-    console.log(`Running on PORT:${port}`);
+    logger.info(`Server running on http://localhost:${port}`);
 });
