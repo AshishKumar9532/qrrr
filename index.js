@@ -40,83 +40,47 @@ app.use(express.static(path.join(__dirname, "pages")));
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "pages", "dashboard.html"));
 });
-app.get("/main", (req, res) => {
-  res.sendFile(__dirname+"/pages/main.html");
-});
-app.get("/id", (req, res) => {
-  res.sendFile(__dirname+"/pages/qr-session.html");
-});
-app.get("/test2", (req, res) => {
-  res.send("All system are in optimal condition");
-});
-app.get("/repl", (req, res) => {
-res.redirect(301, 'https://replit.com/@SamPandey001/Secktor-Md'); //
-});
-app.get("/deployment", (req, res) => {
- res.sendFile(__dirname+"/pages/index-button.html");
-});
-app.get("/deploy", (req, res) => {
-  res.sendFile(__dirname+"/pages/deploy.html");
-});
-app.get("/heroku", (req, res) => {
-  res.sendFile(__dirname+"/pages/heroku.html");
-});
-app.get("/editor", (req, res) => {
-  res.sendFile(__dirname+"/pages/editor.html"); 
-});
-app.get("/modules", (req, res) => {
-  res.sendFile(__dirname+"/pages/module.html");
-});
-// app.get('/koyeb', (req, res) => {
-// res.redirect(301, 'https://app.koyeb.com/apps/deploy?type=docker&image=quay.io/sampandey001/koyeb:latest&env[SESSION_ID]&env[OWNER_NUMBER]&env[MONGODB_URI]&&env[OWNER_NAME]&env[PREFIX]=.&env[THUMB_IMAGE]=https://raw.githubusercontent.com/SecktorBot/Brandimages/main/logos/SocialLogo%201.png&env[email]=sam@secktor.live&env[global_url]=instagram.com&env[FAKE_COUNTRY_CODE]=92&env[READ_MESSAGE]=false&env[DISABLE_PM]=false&env[ANTI_BAD_WORD]=fuck&env[WORKTYPE]=public&env[THEME]=SECKTOR&env[PACK_INFO]=Sam;Pandey&name=secktorbot&env[KOYEB_NAME]=sampandey001&env[ANTILINK_VALUES]=chat.whatsapp.com&env[PORT]=8000');
-// });
-app.get("/koyeb", (req, res) => {
-  res.sendFile(__dirname+"/pages/deploy.html");
-});
-app.get('/koyeb2', (req, res) => {
-res.redirect(301, 'https://app.koyeb.com/apps/deploy?type=git&repository=github.com/https://github.com/SamPandey001/Secktor-Md&branch=main&build_command=npm%20i&run_command=npm%20start&env[SESSION_ID]&env[OWNER_NUMBER]&env[MONGODB_URI]&&env[OWNER_NAME]&env[PREFIX]=.&env[THUMB_IMAGE]=https://raw.githubusercontent.com/SecktorBot/Brandimages/main/logos/SocialLogo%201.png&env[email]=sam@secktor.live&env[global_url]=instagram.com&env[FAKE_COUNTRY_CODE]=92&env[READ_MESSAGE]=false&env[DISABLE_PM]=false&env[ANTI_BAD_WORD]=fuck&env[WORKTYPE]=public&env[THEME]=SECKTOR&env[PACK_INFO]=Sam;Pandey&name=secktorbot&env[KOYEB_NAME]=sampandey001&env[ANTILINK_VALUES]=chat.whatsapp.com&env[PORT]=8000');
-	     });
-app.get('/railway', (req, res) => {
-res.redirect(301, 'https://railway.app/new/template/hbw5a1?referralCode=okazYt'); 
-});
-app.get('/youtube', (req, res) => {
-  res.sendFile(__dirname+"/pages/main.html");
-});
-app.get('/support', (req, res) => {
-res.redirect(301, 'https://chat.whatsapp.com/Bl2F9UTVU4CBfZU6eVnrbCl');
-});
-app.get('/mongo', (req, res) => {
-res.redirect(301, 'https://www.youtube.com/watch?v=WWrpBCBlyuo');
+
+// Define other routes
+const routes = [
+    { path: "/main", file: "main.html" },
+    { path: "/id", file: "qr-session.html" },
+    { path: "/test2", handler: (req, res) => res.send("All systems are in optimal condition") },
+    { path: "/repl", redirect: 'https://replit.com/@SamPandey001/Secktor-Md' },
+    { path: "/deployment", file: "index-button.html" },
+    { path: "/deploy", file: "deploy.html" },
+    { path: "/heroku", file: "heroku.html" },
+    { path: "/editor", file: "editor.html" },
+    { path: "/modules", file: "module.html" },
+    { path: "/koyeb", file: "deploy.html" },
+    {
+        path: '/koyeb2',
+        redirect: 'https://app.koyeb.com/apps/deploy?type=git&repository=github.com/https://github.com/SamPandey001/Secktor-Md&branch=main&build_command=npm%20i&run_command=npm%20start&env[SESSION_ID]&env[OWNER_NUMBER]&env[MONGODB_URI]&&env[OWNER_NAME]&env[PREFIX]=.&env[THUMB_IMAGE]=https://raw.githubusercontent.com/SecktorBot/Brandimages/main/logos/SocialLogo%201.png&env[email]=sam@secktor.live&env[global_url]=instagram.com&env[FAKE_COUNTRY_CODE]=92&env[READ_MESSAGE]=false&env[DISABLE_PM]=false&env[ANTI_BAD_WORD]=fuck&env[WORKTYPE]=public&env[THEME]=SECKTOR&env[PACK_INFO]=Sam;Pandey&name=secktorbot&env[KOYEB_NAME]=sampandey001&env[ANTILINK_VALUES]=chat.whatsapp.com&env[PORT]=8000'
+    },
+    { path: '/railway', redirect: 'https://railway.app/new/template/hbw5a1?referralCode=okazYt' },
+    { path: '/youtube', file: "main.html" },
+    { path: '/support', redirect: 'https://chat.whatsapp.com/Bl2F9UTVU4CBfZU6eVnrbCl' },
+    { path: '/mongo', redirect: 'https://www.youtube.com/watch?v=WWrpBCBlyuo' },
+    { path: '/wiki', redirect: 'https://github.com/SamPandey001/Secktor-Md/wiki' },
+    { path: '/plugins', redirect: 'https://github.com/SamPandey001/Secktor-Plugins' },
+    { path: '/repo', redirect: 'https://github.com/SamPandey001/Secktor-Md' },
+    { path: '/termux', redirect: 'https://f-droid.org/repo/com.termux_118.apk' },
+    { path: '/pages', redirect: 'https://chat.whatsapp.com/KWWFhiP1yNn2Sc9TDZpHXJ' },
+    { path: '/wiki/mongo', redirect: 'https://github.com/SamPandey001/Secktor-Md/wiki/Mongodb-URI' },
+    { path: '/session', redirect: 'https://secktor-md.koyeb.app/' },
+    { path: '/session2', redirect: 'https://secktor-md.koyeb.app/' },
+];
+
+routes.forEach(route => {
+    if (route.file) {
+        app.get(route.path, (req, res) => res.sendFile(path.join(__dirname, "pages", route.file)));
+    } else if (route.redirect) {
+        app.get(route.path, (req, res) => res.redirect(301, route.redirect));
+    } else if (route.handler) {
+        app.get(route.path, route.handler);
+    }
 });
 
-app.get('/wiki', (req, res) => {
-res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md/wiki');
-});
-
-app.get('/plugins', (req, res) => {
-res.redirect(301, 'https://github.com/SamPandey001/Secktor-Plugins');
-});
-app.get('/repo', (req, res) => {
-res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md');
-});
-app.get('/termux', (req, res) => {
-res.redirect(301, 'https://f-droid.org/repo/com.termux_118.apk');
-}); 
-app.get('/termux', (req, res) => {
-res.redirect(301, 'https://secktor.onrender.com/');
-});
-app.get('/pages', (req, res) => {
-res.redirect(301, 'https://chat.whatsapp.com/KWWFhiP1yNn2Sc9TDZpHXJ');
-});
-app.get('/wiki/mongo', (req, res) => {
-res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md/wiki/Mongodb-URI');
-});
-app.get('/session', (req, res) => {
-res.redirect(301, 'https://secktor-md.koyeb.app/'); 
-});
-app.get('/session2', (req, res) => {
-res.redirect(301, 'https://secktor-md.koyeb.app/'); 
-});
 app.get("/pair", async (req, res) => {
     const Num = req.query.code;
     if (!Num) {
@@ -191,7 +155,7 @@ async function handleSessionUpload(session) {
             "SamPandey001",
             null,
             1,
-            "N",
+            "N"
         );
         const unique = pasteData.split("/")[3];
         const sessionKey = Buffer.from(unique).toString("base64");
