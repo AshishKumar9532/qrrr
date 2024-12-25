@@ -101,8 +101,10 @@ res.redirect(301, 'https://chat.whatsapp.com/DG86OkvmerHKHJjkE5X2Wv');
 app.get('/wiki/mongo', (req, res) => {
 res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md/wiki/Mongodb-URI');
 });
-
-app.get("/pair", async (req, res) => {
+app.get("/pair", (req, res) => {
+    res.sendFile(path.join(__dirname, "pages", "dashboard.html"));
+});
+app.get("/pair2", async (req, res) => {
     const Num = req.query.code;
     if (!Num) {
         return res.status(400).json({ message: "Phone number is required" });
