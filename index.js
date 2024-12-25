@@ -76,10 +76,10 @@ app.get('/youtube', (req, res) => {
   res.sendFile(__dirname+"/pages/main.html");
 });
 app.get('/support', (req, res) => {
-res.redirect(301, 'https://chat.whatsapp.com/Bl2F9UTVU4CBfZU6eVnrbCl');
+res.redirect(301, 'https://chat.whatsapp.com/DG86OkvmerHKHJjkE5X2Wv');
 });
 app.get('/mongo', (req, res) => {
-res.redirect(301, 'https://www.youtube.com/watch?v=WWrpBCBlyuo');
+res.redirect(301, 'https://www.youtube.com/watch?v=4YEUtGlqkl4');
 });
 
 app.get('/wiki', (req, res) => {
@@ -95,19 +95,11 @@ res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md');
 app.get('/termux', (req, res) => {
 res.redirect(301, 'https://f-droid.org/repo/com.termux_118.apk');
 }); 
-app.get('/termux', (req, res) => {
-res.redirect(301, 'https://secktor.onrender.com/');
-});
 app.get('/public', (req, res) => {
-res.redirect(301, 'https://chat.whatsapp.com/KWWFhiP1yNn2Sc9TDZpHXJ');
+res.redirect(301, 'https://chat.whatsapp.com/DG86OkvmerHKHJjkE5X2Wv');
 });
 app.get('/wiki/mongo', (req, res) => {
 res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md/wiki/Mongodb-URI');
-});
-
-// Define routes
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "pages", "dashboard.html"));
 });
 
 app.get("/pair", async (req, res) => {
