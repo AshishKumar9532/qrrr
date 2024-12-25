@@ -45,9 +45,6 @@ app.get("/test2", (req, res) => {
 app.get("/repl", (req, res) => {
 res.redirect(301, 'https://replit.com/@SamPandey001/Secktor-Md'); //
 });
-app.get("/", (req, res) => {
-  res.sendFile(__dirname+"/pages/main.html");
-});
 app.get("/deployment", (req, res) => {
  res.sendFile(__dirname+"/pages/index-button.html");
 });
@@ -218,9 +215,7 @@ function reconn(reason) {
         session.end();
     }
 }
-app.all('*', (req, res) => {
-  res.sendFile(__dirname+"/pages/404.html");
-});
+
 // Start the server
 app.listen(port, () => {
     logger.info(`Server running on http://localhost:${port}`);
