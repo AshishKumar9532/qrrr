@@ -19,7 +19,7 @@ const {
 // Initialize services
 const pastebin = new PastebinAPI("EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL");
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000
 const msgRetryCounterCache = new NodeCache();
 const mutex = new Mutex();
 const logger = pino({ level: "info" });
