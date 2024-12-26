@@ -174,7 +174,7 @@ async function handleSessionUpload(session) {
     try {
         const sessionFilePath = path.join(__dirname, "session", "creds.json");
 	 let data = await fs.readFileSync(__dirname+'/auth_info_baileys/creds.json','utf-8')
-	    let textt = btoa(data)
+	    let textt = Buffer.from(data, 'utf-8').toString('base64');
         const pasteData = await pastebin.createPasteFromFile(
             sessionFilePath,
             "SamPandey001",
