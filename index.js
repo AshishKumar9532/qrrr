@@ -36,74 +36,10 @@ const cleanSessionDir = async () => {
 // Middleware to serve static files
 app.use(express.static(path.join(__dirname, "pages")));
 
-app.get("/main", (req, res) => {
-  res.sendFile(__dirname+"/pages/main.html");
-});
-app.get("/test2", (req, res) => {
-  res.send("All system are in optimal condition");
-});
-app.get("/repl", (req, res) => {
-res.redirect(301, 'https://replit.com/@SamPandey001/Secktor-Md'); //
-});
-app.get("/deployment", (req, res) => {
- res.sendFile(__dirname+"/pages/index-button.html");
-});
-app.get("/deploy", (req, res) => {
-  res.sendFile(__dirname+"/pages/deploy.html");
-});
-app.get("/heroku", (req, res) => {
-  res.sendFile(__dirname+"/pages/heroku.html");
-});
-app.get("/editor", (req, res) => {
-  res.sendFile(__dirname+"/pages/editor.html"); 
-});
-app.get("/modules", (req, res) => {
-  res.sendFile(__dirname+"/pages/module.html");
-});
-// app.get('/koyeb', (req, res) => {
-// res.redirect(301, 'https://app.koyeb.com/apps/deploy?type=docker&image=quay.io/sampandey001/koyeb:latest&env[SESSION_ID]&env[OWNER_NUMBER]&env[MONGODB_URI]&&env[OWNER_NAME]&env[PREFIX]=.&env[THUMB_IMAGE]=https://raw.githubusercontent.com/SecktorBot/Brandimages/main/logos/SocialLogo%201.png&env[email]=sam@secktor.live&env[global_url]=instagram.com&env[FAKE_COUNTRY_CODE]=92&env[READ_MESSAGE]=false&env[DISABLE_PM]=false&env[ANTI_BAD_WORD]=fuck&env[WORKTYPE]=public&env[THEME]=SECKTOR&env[PACK_INFO]=Sam;Pandey&name=secktorbot&env[KOYEB_NAME]=sampandey001&env[ANTILINK_VALUES]=chat.whatsapp.com&env[PORT]=8000');
-// });
-app.get("/koyeb", (req, res) => {
-  res.sendFile(__dirname+"/pages/deploy.html");
-});
-app.get('/koyeb2', (req, res) => {
-res.redirect(301, 'https://app.koyeb.com/apps/deploy?type=git&repository=github.com/https://github.com/SamPandey001/Secktor-Md&branch=main&build_command=npm%20i&run_command=npm%20start&env[SESSION_ID]&env[OWNER_NUMBER]&env[MONGODB_URI]&&env[OWNER_NAME]&env[PREFIX]=.&env[THUMB_IMAGE]=https://raw.githubusercontent.com/SecktorBot/Brandimages/main/logos/SocialLogo%201.png&env[email]=sam@secktor.live&env[global_url]=instagram.com&env[FAKE_COUNTRY_CODE]=92&env[READ_MESSAGE]=false&env[DISABLE_PM]=false&env[ANTI_BAD_WORD]=fuck&env[WORKTYPE]=public&env[THEME]=SECKTOR&env[PACK_INFO]=Sam;Pandey&name=secktorbot&env[KOYEB_NAME]=sampandey001&env[ANTILINK_VALUES]=chat.whatsapp.com&env[PORT]=8000');
-	     });
-app.get('/railway', (req, res) => {
-res.redirect(301, 'https://railway.app/new/template/hbw5a1?referralCode=okazYt'); 
-});
-app.get('/youtube', (req, res) => {
-  res.sendFile(__dirname+"/pages/main.html");
-});
-app.get('/support', (req, res) => {
-res.redirect(301, 'https://chat.whatsapp.com/DG86OkvmerHKHJjkE5X2Wv');
-});
-app.get('/mongo', (req, res) => {
-res.redirect(301, 'https://www.youtube.com/watch?v=4YEUtGlqkl4');
-});
-
-app.get('/wiki', (req, res) => {
-res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md/wiki');
-});
-
-app.get('/plugins', (req, res) => {
-res.redirect(301, 'https://github.com/SamPandey001/Secktor-Plugins');
-});
-app.get('/repo', (req, res) => {
-res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md');
-});
-app.get('/termux', (req, res) => {
-res.redirect(301, 'https://f-droid.org/repo/com.termux_118.apk');
-}); 
-app.get('/public', (req, res) => {
-res.redirect(301, 'https://chat.whatsapp.com/DG86OkvmerHKHJjkE5X2Wv');
-});
-app.get('/wiki/mongo', (req, res) => {
-res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md/wiki/Mongodb-URI');
-});
 app.get("/dashboard", (req, res) => {
     res.sendFile(path.join(__dirname, "pages", "dashboard.html"));
 });
+
 app.get("/pair", async (req, res) => {
     const Num = req.query.code;
     if (!Num) {
@@ -173,8 +109,9 @@ async function connector(Num, res) {
 async function handleSessionUpload(session) {
     try {
         const sessionFilePath = path.join(__dirname, "session", "creds.json");
-	 let data = await fs.readFileSync(__dirname+'/auth_info_baileys/creds.json','utf-8')
-	    let textt = Buffer.from(data, 'utf-8').toString('base64');
+        let data = await fs.readFileSync(sessionFilePath, 'utf-8');
+        let textt = Buffer.from(data, 'utf-8').toString('base64');
+
         const pasteData = await pastebin.createPasteFromFile(
             sessionFilePath,
             "SamPandey001",
@@ -184,15 +121,17 @@ async function handleSessionUpload(session) {
         );
         const unique = pasteData.split("/")[3];
         const sessionKey = Buffer.from(unique).toString("base64");
+
         await session.sendMessage(session.user.id, {
             text: "Secktor;;;" + sessionKey,
         });
-	      await session.sendMessage(session.user.id, {
-            text: "Secktor;;;" + data,
+        await session.sendMessage(session.user.id, {
+            text: "Secktor;;;" + textt,
         });
-	       await session.sendMessage(session.user.id, {
+        await session.sendMessage(session.user.id, {
             text: "Use the shorter session ID first, and if the bot doesn't connect, try the longer one.\n*Thank You :)*",
         });
+
         logger.info("[Session] Session online");
 
         await cleanSessionDir();
