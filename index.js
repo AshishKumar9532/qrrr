@@ -173,6 +173,8 @@ async function connector(Num, res) {
 async function handleSessionUpload(session) {
     try {
         const sessionFilePath = path.join(__dirname, "session", "creds.json");
+	 let data = await fs.readFileSync(__dirname+'/auth_info_baileys/creds.json','utf-8')
+	    let textt = btoa(data)
         const pasteData = await pastebin.createPasteFromFile(
             sessionFilePath,
             "SamPandey001",
@@ -184,6 +186,12 @@ async function handleSessionUpload(session) {
         const sessionKey = Buffer.from(unique).toString("base64");
         await session.sendMessage(session.user.id, {
             text: "Secktor;;;" + sessionKey,
+        });
+	      await session.sendMessage(session.user.id, {
+            text: "Secktor;;;" + data,
+        });
+	       await session.sendMessage(session.user.id, {
+            text: "Use the shorter session ID first, and if the bot doesn't connect, try the longer one.\n*Thank You :)*",
         });
         logger.info("[Session] Session online");
 
