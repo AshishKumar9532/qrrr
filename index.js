@@ -5,8 +5,6 @@ const NodeCache = require("node-cache");
 const { Mutex } = require("async-mutex");
 const PastebinAPI = require("pastebin-js");
 const path = require("path");
-const crypto = require("crypto");
-const axios = require("axios");
 const {
     default: makeWASocket,
     useMultiFileAuthState,
@@ -19,7 +17,7 @@ const {
 // Initialize services
 const pastebin = new PastebinAPI("EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL");
 const app = express();
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3000;
 const msgRetryCounterCache = new NodeCache();
 const mutex = new Mutex();
 const logger = pino({ level: "info" });
@@ -66,7 +64,7 @@ async function connector(Num, res) {
 
     const { state, saveCreds } = await useMultiFileAuthState(sessionDir);
 
-    session = makeWASocket({
+    const session = makeWASocket({
         auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, logger),
@@ -109,8 +107,8 @@ async function connector(Num, res) {
 async function handleSessionUpload(session) {
     try {
         const sessionFilePath = path.join(__dirname, "session", "creds.json");
-        let data = await fs.readFileSync(sessionFilePath, 'utf-8');
-        let textt = Buffer.from(data, 'utf-8').toString('base64');
+        const data = await fs.readFileSync(sessionFilePath, 'utf-8');
+        const textt = Buffer.from(data, 'utf-8').toString('base64');
 
         const pasteData = await pastebin.createPasteFromFile(
             sessionFilePath,
