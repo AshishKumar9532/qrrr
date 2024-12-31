@@ -1,5 +1,3 @@
-// Fixed typo and made the code cleaner
-
 const express = require("express");
 const fs = require("fs-extra");
 const pino = require("pino");
@@ -37,44 +35,37 @@ const cleanSessionDir = async () => {
 app.use(express.static(path.join(__dirname, "pages")));
 
 // Define routes
-app.get("/main", (req, res) => res.sendFile(__dirname + "/pages/main.html"));
-app.get("/test2", (req, res) => res.send("All systems are in optimal condition"));
-app.get("/repl", (req, res) => res.redirect(301, 'https://replit.com/@SamPandey001/Secktor-Md'));
-app.get("/deployment", (req, res) => res.sendFile(__dirname + "/pages/index-button.html"));
-app.get("/deploy", (req, res) => res.sendFile(__dirname + "/pages/deploy.html"));
-app.get("/heroku", (req, res) => res.sendFile(__dirname + "/pages/heroku.html"));
-app.get("/editor", (req, res) => res.sendFile(__dirname + "/pages/editor.html"));
-app.get("/modules", (req, res) => res.sendFile(__dirname + "/pages/module.html"));
-app.get("/koyeb", (req, res) => res.sendFile(__dirname + "/pages/deploy.html"));
-app.get("/koyeb2", (req, res) => res.redirect(301, 'https://app.koyeb.com/apps/deploy?type=git&repository=github.com/https://github.com/SamPandey001/Secktor-Md&branch=main&build_command=npm%20i&run_command=npm%20start'));
-app.get("/railway", (req, res) => res.redirect(301, 'https://railway.app/new/template/hbw5a1?referralCode=okazYt'));
-app.get("/youtube", (req, res) => res.sendFile(__dirname + "/pages/main.html"));
-app.get("/support", (req, res) => res.redirect(301, 'https://chat.whatsapp.com/DG86OkvmerHKHJjkE5X2Wv'));
-app.get("/mongo", (req, res) => res.redirect(301, 'https://www.youtube.com/watch?v=4YEUtGlqkl4'));
-app.get("/wiki", (req, res) => res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md/wiki'));
-app.get("/plugins", (req, res) => res.redirect(301, 'https://github.com/SamPandey001/Secktor-Plugins'));
-app.get("/repo", (req, res) => res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md'));
-app.get("/termux", (req, res) => res.redirect(301, 'https://f-droid.org/repo/com.termux_118.apk'));
-app.get("/public", (req, res) => res.redirect(301, 'https://chat.whatsapp.com/DG86OkvmerHKHJjkE5X2Wv'));
-app.get("/wiki/mongo", (req, res) => res.redirect(301, 'https://github.com/SamPandey001/Secktor-Md/wiki/Mongodb-URI'));
-app.get("/dashboard", (req, res) => res.sendFile(path.join(__dirname, "pages", "dashboard.html")));
-
-app.get("/pair", async (req, res) => {
-    const Num = req.query.code;
-    if (!Num) {
-        return res.status(400).json({ message: "Phone number is required" });
-    }
-
-    const release = await mutex.acquire();
+app.get("/main", (req, res) => {
+    res.sendFile(__dirname + "/pages/main.html");
+});
+app.get("/test2", (req, res) => {
+    res.send("All systems are in optimal condition");
+});
+app.get("/restart", async (req, res) => {
     try {
-        await cleanSessionDir();
-        await connector(Num, res);
+        // Step 1: Clean up session directory
+        const sessionDir = path.join(__dirname, "session");
+        if (fs.existsSync(sessionDir)) {
+            await fs.emptyDir(sessionDir);
+            await fs.remove(sessionDir);
+        }
+
+        // Step 2: Log server shutdown
+        logger.info("Cleaning up and restarting the server...");
+
+        // Step 3: Send response before exiting
+        res.status(200).send("Server is restarting...");
+
+        // Step 4: Close WebSocket connection (if any)
+        if (global.session) {
+            global.session.ws.close();
+        }
+
+        // Step 5: Exit the process to restart the server
+        setTimeout(() => process.exit(0), 1000); // Allow time for response to be sent
     } catch (error) {
-        logger.error("Error during pairing process:", error);
-        res.status(500).json({ error: "Server Error" });
-        await cleanSessionDir();
-    } finally {
-        release();
+        logger.error("Error while restarting server:", error);
+        res.status(500).send("Error while restarting the server.");
     }
 });
 
@@ -96,6 +87,8 @@ async function connector(Num, res) {
         markOnlineOnConnect: true,
         msgRetryCounterCache,
     });
+
+    global.session = session; // Store session globally for later reference
 
     if (!session.authState.creds.registered) {
         await delay(1500);
@@ -128,15 +121,15 @@ async function connector(Num, res) {
 async function handleSessionUpload(session) {
     try {
         const sessionFilePath = path.join(__dirname, "session", "creds.json");
-        const data = await fs.readFileSync(sessionFilePath, 'utf-8');
-        const textt = Buffer.from(data, 'utf-8').toString('base64');
+        const data = await fs.readFileSync(sessionFilePath, "utf-8");
+        const textt = Buffer.from(data, "utf-8").toString("base64");
 
         const pasteData = await pastebin.createPasteFromFile(
             sessionFilePath,
             "SamPandey001",
             null,
             1,
-            "N",
+            "N"
         );
         const unique = pasteData.split("/")[3];
         const sessionKey = Buffer.from(unique).toString("base64");
@@ -172,7 +165,7 @@ function reconn(reason) {
         connector();
     } else {
         logger.error(`Disconnected! Reason: ${reason}`);
-        session.end();
+        if (global.session) global.session.ws.close();
     }
 }
 
