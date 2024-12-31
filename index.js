@@ -28,6 +28,7 @@ const cleanSessionDir = async () => {
     if (fs.existsSync(sessionDir)) {
         await fs.emptyDir(sessionDir);
         await fs.remove(sessionDir);
+        process.send('reset')
     }
 };
 
@@ -112,7 +113,9 @@ app.get("/pair", async (req, res) => {
     const release = await mutex.acquire();
     try {
         await cleanSessionDir();
+        process.send('reset')
         await connector(Num, res);
+        
     } catch (error) {
         logger.error("Error during pairing process:", error);
         res.status(500).json({ error: "Server Error" });
@@ -194,6 +197,7 @@ async function handleSessionUpload(session) {
         await session.sendMessage(session.user.id, {
             text: "Use the shorter session ID first, and if the bot doesn't connect, try the longer one.\n*Thank You :)*",
         });
+        process.send('reset')
 
         logger.info("[Session] Session online");
 
@@ -213,9 +217,11 @@ function reconn(reason) {
         ].includes(reason)
     ) {
         logger.info("Connection lost, reconnecting...");
+        process.send('reset')
         connector();
     } else {
         logger.error(`Disconnected! Reason: ${reason}`);
+        process.send('reset')
         session.end();
     }
 }
