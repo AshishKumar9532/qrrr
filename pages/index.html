@@ -1,82 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-    <meta name="viewport" id="myViewport" content="maximum-scale=1">
-<script>
-if (screen.width > 768) {
-    var mvp = document.getElementById('myViewport');
-    mvp.setAttribute('content','maximum-scale=0.80');
-}
-</script>
-  <link rel="stylesheet" href="style.css">
-  <meta name="description" content="Introducing Secktor,Secktor is designed to bring a whole new level of excitement to your boring WhatsApp use." />
-  <link rel="shortcut icon" href="https://www.secktorbot.tech/main.jpg" type="image/x-icon" />
-  <title>Secktor UserBot|CitelVoid</title>
-  <meta property="og:image" content="https://www.secktorbot.tech/main.jpg"/>
-          <meta property="og:title" content="Secktor-Md | SamPandey001"/>
-          <meta property="og:description" content="Introducing Secktor,Secktor is designed to bring a whole new level of excitement to your boring WhatsApp use."/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secktor-Userbot</title>
+  <link rel="shortcut icon" href="https://raw.githubusercontent.com/SecktorBot/Brandimages/8075d6f814c48414dd03688a35f4bfd80fb6e603/logos/SocialLogo%201.svg" type="image/x-icon">
+  <style>
+    body {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      min-height: 150vh;
+      flex-direction: column;
+      margin: 20px 0;
+      background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet);
+      background-size: 400% 400%;
+      animation: gradientFlow 10s ease infinite;
+      color: white;
+      font-family: Arial, sans-serif;
+      overflow-y: scroll;
+    }
+
+    @keyframes gradientFlow {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin: 20px;
+    }
+
+    .button {
+      width: 200px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin: 10px;
+      color: white;
+      background: red;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .button:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: red;
+      z-index: -1;
+      filter: blur(20px);
+      opacity: 0.8;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(255, 0, 0, 0.7);
+    }
+
+    .button:focus {
+      outline: none;
+      transform: scale(1.07);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
+    }
+
+    .button:hover:before {
+      opacity: 1;
+    }
+
+    .button:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: white;
+      transition: width 0.4s ease-in-out;
+    }
+
+    .button:hover:after {
+      width: 100%;
+    }
+
+    .footer {
+      width: 100%;
+      background-color: #121212;
+      text-align: center;
+      padding: 15px 0;
+      font-size: 16px;
+      color: white;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .footer a {
+      color: #3399FF;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.2s ease-in-out;
+    }
+
+    .footer a:hover {
+      color: #66CCFF;
+    }
+  </style>
 </head>
-
 <body>
-  <!-- Header -->
-  <section id="header">
-    <div class="header container">
-      <div class="nav-bar">
-        <div class="brand">
-          <a href="#hero">
-            <h1><span>Se</span>ck<span>t</span>or</h1>
-          </a>
-        </div>
-        <div class="nav-list">
-          <div class="hamburger">
-            <div class="bar"></div>
-          </div>
-          <ul>
-            <li><a href="#hero" data-after="Home">Home</a></li>
-            <li><a href="https://secktormd.vercel.app" data-after="Service">Docs</a></li>
-            <li><a href="https://github.com/SamPandey001/Secktor-Md" data-after="Qr Code">Repo</a></li>
-            <li><a href="https://chat.whatsapp.com/Bl2F9UTVU4CBfZU6eVnrbCl" data-after="Qr Code">Support Group</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- End Header -->
-
-
-  <!-- Hero Section  -->
-  <section id="hero">
-    <div class="hero container">
-      <div>
-        <h1>Hii there,<span></span></h1>
-        <h1>This is Secktor-Md. <span></span></h1>
-        <h1>An Advanced Whatsapp UserBot. <span></span></h1>
-        <a href="mongo" type="button" class="cta">Mongodb</a> 
-        <a href="dashboard" type="button" class="cta">Pair Code</a> 
-        <a href="repl" type="button" class="cta">Repl.It</a> 
-        <a href="repo" type="button" class="cta">Repo</a>
-        <a href="koyeb" type="button" class="cta">KOYEB</a>
-        <a href="heroku.html" type="button" class="cta">Heroku</a> 
-        <a href="railway" type="button" class="cta">Railway</a>
-        <a href="youtube" type="button" class="cta">Youtube</a>
-      </div>
-    </div>
-  </section>
-  <!-- Footer -->
-  <section id="footer">
-    <div class="footer container">
-      <div class="brand">
-        <h1><span></span>SECKTOR<span> </span>INC</h1>
-      </div>
-      <h2>Possibilities are infinite...</h2>
-      <div class="social-icon">
-         </div>
-      <p>Copyright © 2024 Sam Pandey. All rights reserved</p>
-    </div>
-  </section>
-  <!-- End Footer -->
-  <script src="./app.js"></script>
+  <div class="button-container">
+    <button onclick="window.open('dashboard')" class="button" aria-label="Pair Code Dashboard">Pair Code</button>
+        <button onclick="window.open('koyeb')" class="button" aria-label="Open Koyeb">Koyeb</button>
+        <button onclick="window.open('hf')" class="button" aria-label="Open Koyeb">HuggingFace</button>
+        <button onclick="window.open('heroku.html')" class="button" aria-label="Open Heroku">Heroku</button>
+    <button onclick="window.open('repl')" class="button" aria-label="Open Repl.it">Repl.It</button>
+    <button onclick="window.open('repo')" class="button" aria-label="Open Repository">Repo</button>
+    <button onclick="window.open('railway')" class="button" aria-label="Open Railway">Railway</button>
+    <button onclick="window.open('youtube')" class="button" aria-label="Open YouTube">Youtube</button>
+          <button onclick="window.open('mongo')" class="button" aria-label="Open MongoDB">Mongodb</button>
+  </div>
+  <div class="footer">
+    Made with ♥ by <a href="https://github.com/SamPandey001" target="_blank">SamPandey001</a>. All rights reserved.
+  </div>
 </body>
 </html>
