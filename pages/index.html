@@ -2,23 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secktor-Userbot</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="Secktor UserBot">
   <link rel="shortcut icon" href="https://raw.githubusercontent.com/SecktorBot/Brandimages/8075d6f814c48414dd03688a35f4bfd80fb6e603/logos/SocialLogo%201.svg" type="image/x-icon">
+  <title>Secktor UserBot</title>
   <style>
     body {
       display: flex;
-      justify-content: flex-start;
+      justify-content: center;
       align-items: center;
-      min-height: 150vh;
-      flex-direction: column;
-      margin: 20px 0;
-      background: linear-gradient(135deg, red, orange, yellow, green, blue, indigo, violet);
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.4), rgba(255, 165, 0, 0.4), rgba(255, 255, 0, 0.4), rgba(0, 128, 0, 0.4), rgba(0, 0, 255, 0.4), rgba(75, 0, 130, 0.4), rgba(238, 130, 238, 0.4));
       background-size: 400% 400%;
       animation: gradientFlow 10s ease infinite;
-      color: white;
+      color: #ffffff;
       font-family: Arial, sans-serif;
-      overflow-y: scroll;
     }
 
     @keyframes gradientFlow {
@@ -33,117 +33,64 @@
       }
     }
 
-    .button-container {
+    .container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
-      margin: 20px;
+      width: 100%;
+      max-width: 768px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 20px;
+      width: 100%;
     }
 
     .button {
-      width: 200px;
-      height: 50px;
       display: flex;
-      align-items: center;
       justify-content: center;
-      font-size: 16px;
-      font-weight: bold;
-      text-transform: uppercase;
-      margin: 10px;
+      align-items: center;
+      background-color: #007bff;
       color: white;
-      background: red;
-      border: none;
-      border-radius: 10px;
+      text-transform: uppercase;
+      text-align: center;
+      font-weight: bold;
+      padding: 15px;
+      border-radius: 8px;
+      transition: background-color 0.2s ease-in-out;
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    }
-
-    .button:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: red;
-      z-index: -1;
-      filter: blur(20px);
-      opacity: 0.8;
-      transition: opacity 0.3s ease-in-out;
     }
 
     .button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(255, 0, 0, 0.7);
+      background-color: #0056b3;
     }
 
-    .button:focus {
-      outline: none;
-      transform: scale(1.07);
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
-    }
-
-    .button:hover:before {
-      opacity: 1;
-    }
-
-    .button:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 3px;
-      background: white;
-      transition: width 0.4s ease-in-out;
-    }
-
-    .button:hover:after {
-      width: 100%;
-    }
-
-    .footer {
-      width: 100%;
-      background-color: #121212;
-      text-align: center;
-      padding: 15px 0;
-      font-size: 16px;
-      color: white;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.5);
-    }
-
-    .footer a {
-      color: #3399FF;
-      text-decoration: none;
-      font-weight: bold;
-      transition: color 0.2s ease-in-out;
-    }
-
-    .footer a:hover {
-      color: #66CCFF;
-    }
+    .button.red { background-color: #dc3545; }
+    .button.red:hover { background-color: #b02a37; }
+    .button.gray { background-color: #6c757d; }
+    .button.gray:hover { background-color: #5a6268; }
+    .button.yellow { background-color: #ffc107; }
+    .button.yellow:hover { background-color: #e0a800; }
   </style>
 </head>
 <body>
-  <div class="button-container">
-    <button onclick="window.open('dashboard')" class="button" aria-label="Pair Code Dashboard">Pair Code</button>
-        <button onclick="window.open('koyeb')" class="button" aria-label="Open Koyeb">Koyeb</button>
-        <button onclick="window.open('hf')" class="button" aria-label="Open Koyeb">HuggingFace</button>
-        <button onclick="window.open('heroku.html')" class="button" aria-label="Open Heroku">Heroku</button>
-    <button onclick="window.open('repl')" class="button" aria-label="Open Repl.it">Repl.It</button>
-    <button onclick="window.open('repo')" class="button" aria-label="Open Repository">Repo</button>
-    <button onclick="window.open('railway')" class="button" aria-label="Open Railway">Railway</button>
-    <button onclick="window.open('youtube')" class="button" aria-label="Open YouTube">Youtube</button>
-          <button onclick="window.open('mongo')" class="button" aria-label="Open MongoDB">Mongodb</button>
-  </div>
-  <div class="footer">
-    Made with ♥ by <a href="https://github.com/SamPandey001" target="_blank">SamPandey001</a>. All rights reserved.
+  <div class="container">
+    <div class="grid">
+      <button class="button" onclick="window.open('dashboard')">Dashboard</button>
+      <button class="button red" onclick="window.open('koyeb')">Koyeb</button>
+      <button class="button gray" onclick="window.open('hf')">HuggingFace</button>
+      <button class="button" onclick="window.open('heroku.html')">Heroku</button>
+      <button class="button" onclick="window.open('repl')">Repl.It</button>
+      <button class="button" onclick="window.open('repo')">Repo</button>
+      <button class="button" onclick="window.open('railway')">Railway</button>
+      <button class="button" onclick="window.open('youtube')">YouTube</button>
+      <button class="button yellow" onclick="window.open('mongo')">MongoDB</button>
+    </div>
   </div>
 </body>
 </html>
